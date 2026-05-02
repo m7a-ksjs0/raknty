@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>raknty</title>
+    <link rel="stylesheet" href="css/all.min.css" />
+    <link rel="stylesheet" href="css/bootstrap.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script>
+function goToPayment(name, price) {
+  // نخزن البيانات
+  localStorage.setItem("placeName", name);
+  localStorage.setItem("price", price);
+
+  // نروح لصفحة الدفع
+  window.location.href = "payment.html";
+}
+</script>
+    <script>
+let autoSlide;
+
+function scrollCards(direction) {
+  const container = document.getElementById("cardsWrapper");
+
+  if (!container) return;
+
+  const card = container.querySelector(".parking-card");
+  if (!card) return;
+
+  const style = window.getComputedStyle(container);
+  const gap = parseInt(style.gap) || 20;
+
+  const cardWidth = card.offsetWidth + gap;
+
+  container.scrollBy({
+    left: direction * cardWidth,
+    behavior: "smooth"
+  });
+}
+
+function startAutoSlide() {
+  autoSlide = setInterval(() => {
+    scrollCards(1);
+  }, 3000); 
+}
+function stopAutoSlide() {
+  clearInterval(autoSlide);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  startAutoSlide();
+
+  const container = document.getElementById("cardsWrapper");
+  container.addEventListener("mouseenter", stopAutoSlide);
+
+  container.addEventListener("mouseleave", startAutoSlide);
+});
+</script>
+</head>
+<body>
+     <main class="mian-tenant">
+      <header class="d">
+        <nav class="navbar navbar-expand-lg custom-navbar">
+  <div class="container d-flex justify-content-between align-items-center ">
+
+    <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+      <img src="img/7ec00354-f338-412d-a4a1-11a34e710726.png" alt="logo" class="logo">
+    </a>
+
+    <button class="navbar-toggler col-2 col-md-2 col-lg-2" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse col-12 col-md-6 col-lg-3" id="nav">
+      <ul class="navbar-nav mx-auto">
+        <li class="nav-item"><a class="nav-link" href="index.html">الرئيسية</a></li>
+        <li class="nav-item"><a class="nav-link " href="about.html">عن ركنتي</a></li>
+        <li class="nav-item"><a class="nav-link active" href="tenant.html">اماكن متاحه</a></li>
+        <li class="nav-item"><a class="nav-link " href="rented.html">اضف مكان</a></li>
+        <li class="nav-item"><a class="nav-link " href="contact.html">تواصل معنا</a></li>
+      </ul>
+
+      <button class="btn  navbtn" onclick="location.href='#login'" >سجل الآن</button>
+    </div>
+    </div>
+</nav>
+</header>
+<<section class="parking-section">
+  <div class="container">
+
+    <div class="top-bar">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="ابحث عن مكان...">
+      </div>
+
+      <div class="filters">
+        <div class="filter-btn active"><i class="fa-solid fa-sliders"></i> فلترة</div>
+        <div class="filter-btn">الموقع</div>
+        <div class="filter-btn">السعر</div>
+        <div class="filter-btn">التقييم</div>
+      </div>
+    </div>
+
+    <div class="cards-container">
+
+      <button class="arrow left" onclick="scrollCards(-1)">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+
+      <div class="cards-wrapper" id="cardsWrapper">
+
+        <div class="parking-card"><img src="img/ChatGPT Image Apr 29, 2026, 12_42_48 AM.png"><div class="card-content"><h5>مول العرب</h5><p>6 أكتوبر</p><div class="rating">⭐ 4.8</div><h6>20 ج.م / ساعة</h6><button onclick="goToPayment('مول العرب', 20)">احجز الآن</button></div></div>
+
+        <div class="parking-card"><img src="img/ChatGPT Image Apr 29, 2026, 12_46_04 AM.png"><div class="card-content"><h5>سيتي ستارز</h5><p>مدينة نصر</p><div class="rating">⭐ 4.9</div><h6>15 ج.م / ساعة</h6><button onclick="goToPayment('مدينه نصر', 15)">احجز الآن</button></div></div>
+
+        <div class="parking-card"><img src="img/ChatGPT Image Apr 29, 2026, 12_47_12 AM.png"><div class="card-content"><h5>كايرو فيستيفال</h5><p>القاهرة الجديدة</p><div class="rating">⭐ 4.7</div><h6>25 ج.م / ساعة</h6><button onclick="goToPayment('القاهره الجديده', 25)">احجز الآن</button></div></div>
+
+        <div class="parking-card"><img src="img/ChatGPT Image Apr 29, 2026, 12_48_46 AM.png"><div class="card-content"><h5>دريم بارك</h5><p>6 أكتوبر</p><div class="rating">⭐ 4.5</div><h6>10 ج.م / ساعة</h6><button onclick="goToPayment('مول العرب', 10)">احجز الآن</button></div></div>
+
+        <div class="parking-card"><img src="img/ChatGPT Image Apr 29, 2026, 12_49_29 AM.png"><div class="card-content"><h5>مول مصر</h5><p>6 أكتوبر</p><div class="rating">⭐ 4.6</div><h6>18 ج.م / ساعة</h6><button onclick="goToPayment('مول العرب', 18)">احجز الآن</button></div></div>
+
+        <div class="parking-card"><img src="img/ChatGPT Image Apr 29, 2026, 12_50_12 AM.png"><div class="card-content"><h5>الرحاب</h5><p>القاهرة الجديدة</p><div class="rating">⭐ 4.4</div><h6>12 ج.م / ساعة</h6><button onclick="goToPayment('القاهرة الجديدة', 12)">احجز الآن</button></div></div>
+
+        <div class="parking-card"><img src="img/ChatGPT Image Apr 29, 2026, 12_51_58 AM.png"><div class="card-content"><h5>التجمع الخامس</h5><p>القاهرة</p><div class="rating">⭐ 4.8</div><h6>22 ج.م / ساعة</h6><button onclick="goToPayment('القاهرة', 22)">احجز الآن</button></div></div>
+
+        <div class="parking-card"><img src="img/ChatGPT Image Apr 29, 2026, 12_53_45 AM.png"><div class="card-content"><h5>الشيخ زايد</h5><p>الجيزة</p><div class="rating">⭐ 4.7</div><h6>17 ج.م / ساعة</h6><button onclick="goToPayment(' الجيزة', 17)">احجز الآن</button></div></div>
+
+      </div>
+
+      <button class="arrow right" onclick="scrollCards(1)">
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+
+    </div>
+
+  </div>
+</section>
+
+</main>
+    
+    <script src="js/bootstrap.bundle.js"></script>
+</body>
+</html>

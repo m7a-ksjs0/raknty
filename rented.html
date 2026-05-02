@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>raknty</title>
+    <link rel="stylesheet" href="css/all.min.css" />
+    <link rel="stylesheet" href="css/bootstrap.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    
+</head>
+<body>
+     <main class="mian-tenant">
+      <header class="d">
+        <nav class="navbar navbar-expand-lg custom-navbar">
+  <div class="container d-flex justify-content-between align-items-center ">
+
+    <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+      <img src="img/7ec00354-f338-412d-a4a1-11a34e710726.png" alt="logo" class="logo">
+    </a>
+
+    <button class="navbar-toggler col-2 col-md-2 col-lg-2" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse col-12 col-md-6 col-lg-3" id="nav">
+      <ul class="navbar-nav mx-auto">
+        <li class="nav-item"><a class="nav-link" href="index.html">الرئيسية</a></li>
+        <li class="nav-item"><a class="nav-link " href="about.html">عن ركنتي</a></li>
+        <li class="nav-item"><a class="nav-link " href="tenant.html">اماكن متاحه</a></li>
+        <li class="nav-item"><a class="nav-link active " href="rented.html">اضف مكان</a></li>
+        <li class="nav-item"><a class="nav-link " href="contact.html">تواصل معنا</a></li>
+      </ul>
+
+      <button class="btn  navbtn" onclick="location.href='#login'" >سجل الآن</button>
+    </div>
+    </div>
+</nav>
+<section class="add-place-section">
+  <div class="container">
+
+    <div class="form-box">
+
+      <h3 class="section-title">المعلومات الأساسية</h3>
+
+      <div class="form-grid">
+
+        <div class="input-group">
+          <label>اسم المكان</label>
+          <input type="text" placeholder="ادخل اسم المكان">
+        </div>
+
+        <div class="input-group">
+          <label>الموقع</label>
+          <input type="text" placeholder="ادخل الموقع بدقة">
+        </div>
+
+        <div class="input-group">
+          <label>السعر في الساعة (ج.م)</label>
+          <input type="number" placeholder="ادخل السعر في الساعة">
+        </div>
+
+        <div class="input-group">
+          <label>السعر اليومي (ج.م)</label>
+          <input type="number" placeholder="ادخل السعر اليومي">
+        </div>
+
+      </div>
+
+      <div class="input-group full">
+        <label>الوصف</label>
+        <textarea placeholder="اكتب وصف المكان والخدمات..."></textarea>
+      </div>
+
+      <div class="features">
+        <button type="">مياه</button>
+        <button>كهرباء</button>
+        <button>مظلل</button>
+        <button>أمن 24 ساعة</button>
+        <button>كاميرات</button>
+      </div>
+
+      <div class="images-section">
+
+        <div class="upload-box">
+          <p>إضافة صور</p>
+        </div>
+
+        <div class="image-preview"></div>
+        <div class="image-preview"></div>
+        <div class="image-preview"></div>
+
+      </div>
+
+      <div class="map-box">
+        <p>الموقع على الخريطة</p>
+      </div>
+
+      <div class="form-actions">
+        <button class="cancel">إلغاء</button>
+        <button class="submit">إضافة المكان</button>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+</main>
+    
+    <script src="js/bootstrap.bundle.js"></script>
+</body>
+</html>
