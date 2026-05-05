@@ -9,9 +9,6 @@
     <link rel="stylesheet" href="css/all.min.css" />
     <link rel="stylesheet" href="css/bootstrap.css" />
     <link rel="stylesheet" href="css/style.css" />
-    
-    
-    
 </head>
 <body>
     <main class="mian-tenant">
@@ -33,10 +30,10 @@
         <li class="nav-item"><a class="nav-link " href="about.html">عن ركنتي</a></li>
         <li class="nav-item"><a class="nav-link " href="tenant.html">اماكن متاحه</a></li>
         <li class="nav-item"><a class="nav-link active " href="rented.html">اضف مكان</a></li>
-        <li class="nav-item"><a class="nav-link " href="contact.html">تواصل معنا</a></li>
+        <!-- <li class="nav-item"><a class="nav-link " href="contact.html">تواصل معنا</a></li> -->
       </ul>
 
-      <button class="btn  navbtn" onclick="location.href='#login'" >سجل الآن</button>
+      <button class="btn  navbtn" onclick="location.href='login.html'" >سجل الآن</button>
     </div>
     </div>
 </nav>
@@ -47,6 +44,7 @@
 
   <p id="place">المكان: مول العرب</p>
   <p id="hourlyPrice">السعر في الساعة: 20 ج.م</p>
+  <p id="workingHours" style="color: #bbb; font-size: 14px; margin-top: 10px; margin-bottom: 15px; "></p>
 
   <div class="date-selector" style="margin: 15px 0; text-align: right;">
     <label style="color: #aaa; display: block; margin-bottom: 5px;">تاريخ الحجز:</label>
@@ -84,9 +82,11 @@
 
 </div>
 </div>
+
 </main>
     
     <script src="js/bootstrap.bundle.js"></script>
+    <script src="js/auth.js"></script>
 </body>
          <script>
      const bookingDateInput = document.getElementById("bookingDate");
@@ -94,6 +94,17 @@
      const endTimeInput = document.getElementById("endTime");
      const durationText = document.getElementById("durationText");
      const totalPriceDisplay = document.getElementById("totalPrice");
+     
+     const place = localStorage.getItem("placeName");
+     const price = localStorage.getItem("price") || 20;
+     const availableStart = localStorage.getItem("availableStart") || "00:00";
+     const availableEnd = localStorage.getItem("availableEnd") || "23:59";
+
+     if (place) {
+         document.getElementById("place").innerText = "المكان: " + place;
+         document.getElementById("hourlyPrice").innerText = "السعر في الساعة: " + price + " ج.م";
+         document.getElementById("workingHours").innerText = `متاح من ${availableStart} إلى ${availableEnd}`;
+     }
 
      // Set default date to today
      const today = new Date().toISOString().split('T')[0];
@@ -118,8 +129,40 @@
          durationText.innerText = "المدة: " + hours + " ساعة";
          totalPriceDisplay.innerText = "إجمالي الحساب: " + total + " ج.م";
 
+         if (!checkWorkingHours(startMin, endMin)) {
+             const payBtn = document.querySelector('button[onclick="payNow()"]');
+             payBtn.disabled = true;
+             payBtn.innerText = `عذراً، أوقات العمل من ${availableStart} إلى ${availableEnd}`;
+             payBtn.style.background = "#555";
+             return;
+         }
+
          // Check for overlaps
          checkOverlap(bookingDateInput.value, startMin, endMin);
+     }
+
+     function checkWorkingHours(reqStart, reqEnd) {
+         const availStart = availableStart.split(':');
+         const availEnd = availableEnd.split(':');
+         const availStartMin = parseInt(availStart[0]) * 60 + parseInt(availStart[1]);
+         const availEndMin = parseInt(availEnd[0]) * 60 + parseInt(availEnd[1]);
+
+         if (availStartMin === 0 && (availEndMin === 1439 || availEndMin === 0)) return true;
+
+         if (availEndMin < availStartMin) {
+             if (reqStart <= reqEnd) {
+                 if ((reqStart >= availStartMin && reqEnd >= availStartMin) || (reqStart <= availEndMin && reqEnd <= availEndMin)) {
+                     return true;
+                 }
+                 return false;
+             } else {
+                 if (reqStart >= availStartMin && reqEnd <= availEndMin) return true;
+                 return false;
+             }
+         } else {
+             if (reqStart > reqEnd) return false;
+             return (reqStart >= availStartMin && reqEnd <= availEndMin);
+         }
      }
 
      function checkOverlap(date, newStart, newEnd) {
@@ -177,19 +220,38 @@
        });
        localStorage.setItem("allReservations", JSON.stringify(reservations));
 
-       alert(`تم الحجز بنجاح ليوم ${date} ✅`);
-       location.href = "index.html";
-     }
-     </script>
-     <script>
-     function goToPayment(name, price) {
-       localStorage.setItem("placeName", name);
-       localStorage.setItem("price", price);
-     
-       window.location.href = "payment.html";
+       // Send Email via Google Apps Script
+       const userEmail = localStorage.getItem('userEmail');
+       const userName = localStorage.getItem('userName') || 'عميلنا العزيز';
+       const placeName = localStorage.getItem("placeName");
+       const totalPrice = document.getElementById("totalPrice").innerText.replace("إجمالي الحساب: ", "");
+
+       if (userEmail) {
+           // ستقوم بتبديل هذا الرابط بالرابط الذي ستحصل عليه من جوجل
+           const scriptURL = 'https://script.google.com/macros/s/AKfycby883BVBja7Oc3njTR8Pws3DyCDS_ckCjBH2Gj3GKgLDD8LbU9Mp8FVmXyDoMiT_oczBQ/exec'; 
+           
+           if (scriptURL !== 'YOUR_GOOGLE_SCRIPT_URL') {
+               const formData = new URLSearchParams();
+               formData.append('email', userEmail);
+               formData.append('userName', userName);
+               formData.append('placeName', placeName);
+               formData.append('date', date);
+               formData.append('start', startTimeInput.value);
+               formData.append('end', endTimeInput.value);
+               formData.append('price', totalPrice);
+               
+               // إرسال الطلب في الخلفية
+               fetch(scriptURL, {
+                   method: 'POST',
+                   body: formData,
+                   mode: 'no-cors'
+               }).then(() => {
+                   console.log('Email sent!');
+               }).catch(error => console.error('Error!', error.message));
+           }
+       }
+
+       showAlert(`لقد تم تأكيد حجزك ليوم ${date} بنجاح، وسيصلك إيميل بكافة التفاصيل قريباً. نتمنى لك قيادة آمنة!`, true, "index.html");
      }
      </script>
 </html>
-
-
-

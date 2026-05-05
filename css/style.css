@@ -950,3 +950,84 @@ background: rgba(255, 255, 2/55, 0.05);
 .pdiv{
   padding-top: 250px;
 }
+.login-section {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 150px 20px 40px 20px;
+            direction: rtl;
+        }
+        .login-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        .login-box h2 {
+            color: #D4AF37;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        .login-box p {
+            color: #ccc;
+            margin-bottom: 30px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+        .input-group label {
+            display: block;
+            color: #aaa;
+            margin-bottom: 8px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: white;
+            transition: 0.3s;
+        }
+        .input-group input:focus {
+            border-color: #D4AF37;
+            outline: none;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .submit-btn {
+            background: linear-gradient(135deg, #D4AF37, #b8962e);
+            color: #0b0f19;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+        }
+        .toggle-text {
+            margin-top: 20px;
+            color: #aaa;
+            font-size: 14px;
+        }
+        .toggle-text span {
+            color: #D4AF37;
+            cursor: pointer;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        .toggle-text span:hover {
+            text-decoration: underline;
+        }

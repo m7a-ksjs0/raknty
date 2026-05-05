@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - Raknty</title>
+    <link rel="icon" type="image/png" href="img/7ec00354-f338-412d-a4a1-11a34e710726.png">
+    <link rel="stylesheet" href="css/all.min.css" />
+    <link rel="stylesheet" href="css/bootstrap.css" />
+    <link rel="stylesheet" href="css/style.css" />
+   
+</head>
+<body>
+    <main class="mian-tenant">
+      <header class="d">
+        <nav class="navbar navbar-expand-lg custom-navbar">
+          <div class="container d-flex justify-content-between align-items-center ">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+              <img src="img/7ec00354-f338-412d-a4a1-11a34e710726.png" alt="logo" class="logo">
+            </a>
+            <button class="navbar-toggler col-2 col-md-2 col-lg-2" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse col-12 col-md-6 col-lg-3" id="nav">
+              <ul class="navbar-nav mx-auto">
+                <li class="nav-item"><a class="nav-link" href="index.html">الرئيسية</a></li>
+                <li class="nav-item"><a class="nav-link" href="about.html">عن ركنتي</a></li>
+                <li class="nav-item"><a class="nav-link" href="tenant.html">اماكن متاحه</a></li>
+                <li class="nav-item"><a class="nav-link" href="rented.html">اضف مكان</a></li>
+                <!-- <li class="nav-item"><a class="nav-link" href="contact.html">تواصل معنا</a></li> -->
+              </ul>
+      <button class="btn  navbtn" onclick="location.href='login.html'">سجل الآن</button>
+            </div>
+          </div>
+        </nav>
+      </header>
+
+      <section class="login-section">
+        <div class="container d-flex justify-content-center">
+            <div class="login-box" id="authBox">
+                <!-- Content injected via JS -->
+            </div>
+        </div>
+      </section>
+    </main>
+    
+    <script src="js/bootstrap.bundle.js"></script>
+    <script>
+        let isLoginMode = false; // Start with registration
+        
+        function renderAuthForm() {
+            const authBox = document.getElementById('authBox');
+            if (isLoginMode) {
+                authBox.innerHTML = `
+                    <h2>تسجيل الدخول</h2>
+                    <p>أهلاً بك مجدداً في ركنتي</p>
+                    <form onsubmit="handleLogin(event)">
+                        <div class="input-group">
+                            <label>البريد الإلكتروني</label>
+                            <input type="email" id="loginEmail" placeholder="أدخل بريدك الإلكتروني" required>
+                        </div>
+                        <div class="input-group">
+                            <label>كلمة المرور</label>
+                            <input type="password" id="loginPassword" placeholder="أدخل كلمة المرور" required>
+                        </div>
+                        <button type="submit" class="submit-btn">دخول</button>
+                    </form>
+                    <div class="toggle-text">ليس لديك حساب؟ <span onclick="toggleMode()">سجل الآن</span></div>
+                `;
+            } else {
+                authBox.innerHTML = `
+                    <h2>إنشاء حساب</h2>
+                    <p>انضم إلينا وابدأ في حجز مكانك</p>
+                    <form onsubmit="handleRegister(event)">
+                        <div class="input-group">
+                            <label>الاسم الكامل</label>
+                            <input type="text" id="regName" placeholder="أدخل اسمك الكامل" required>
+                        </div>
+                        <div class="input-group">
+                            <label>البريد الإلكتروني</label>
+                            <input type="email" id="regEmail" placeholder="أدخل بريدك الإلكتروني" required>
+                        </div>
+                        <div class="input-group">
+                            <label>كلمة المرور</label>
+                            <input type="password" id="regPassword" placeholder="أدخل كلمة المرور" required>
+                        </div>
+                        <button type="submit" class="submit-btn">إنشاء حساب</button>
+                    </form>
+                    <div class="toggle-text">لديك حساب بالفعل؟ <span onclick="toggleMode()">تسجيل الدخول</span></div>
+                `;
+            }
+        }
+
+        function toggleMode() {
+            isLoginMode = !isLoginMode;
+            renderAuthForm();
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            
+            // Save to localStorage
+            localStorage.setItem('userLoggedIn', 'true');
+            localStorage.setItem('userName', name);
+            localStorage.setItem('userEmail', email);
+            
+            showAlert("تم إنشاء الحساب بنجاح! مرحباً بك.", true);
+            setTimeout(() => checkRedirect(), 1500);
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            
+            // Dummy login logic
+            localStorage.setItem('userLoggedIn', 'true');
+            localStorage.setItem('userEmail', email);
+            localStorage.setItem('userName', email.split('@')[0]); // Fake name
+            
+            showAlert("تم تسجيل الدخول بنجاح! مرحباً بك.", true);
+            setTimeout(() => checkRedirect(), 1500);
+        }
+
+        function checkRedirect() {
+            const redirectParams = new URLSearchParams(window.location.search);
+            const redirectUrl = redirectParams.get('redirect');
+            if (redirectUrl) {
+                window.location.href = redirectUrl;
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Check if already logged in
+        if (localStorage.getItem('userLoggedIn') === 'true') {
+            checkRedirect();
+        } else {
+            renderAuthForm();
+        }
+    </script>
+    <script src="js/auth.js"></script>
+</body>
+</html>

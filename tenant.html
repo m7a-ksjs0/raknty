@@ -10,10 +10,16 @@
     <link rel="stylesheet" href="css/bootstrap.css" />
     <link rel="stylesheet" href="css/style.css" />
     <script>
-function goToPayment(name, price) {
+function goToPayment(name, price, availableStart = "00:00", availableEnd = "23:59") {
+  if (localStorage.getItem('userLoggedIn') !== 'true') {
+      window.location.href = "login.html?redirect=tenant.html";
+      return;
+  }
   // نخزن البيانات
   localStorage.setItem("placeName", name);
   localStorage.setItem("price", price);
+  localStorage.setItem("availableStart", availableStart);
+  localStorage.setItem("availableEnd", availableEnd);
 
   // نروح لصفحة الدفع
   window.location.href = "payment.html";
@@ -70,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
               <p>${place.location}</p>
               <div class="rating">⭐ ${place.rating}</div>
               <h6>${place.price} ج.م / ساعة</h6>
-              <button onclick="goToPayment('${place.name}', ${place.price})">احجز الآن</button>
+              <button onclick="goToPayment('${place.name}', ${place.price}, '${place.availableStart || '00:00'}', '${place.availableEnd || '23:59'}')">احجز الآن</button>
           </div>
       `;
       container.prepend(card);
@@ -98,10 +104,10 @@ document.addEventListener("DOMContentLoaded", () => {
         <li class="nav-item"><a class="nav-link " href="about.html">عن ركنتي</a></li>
         <li class="nav-item"><a class="nav-link active" href="tenant.html">اماكن متاحه</a></li>
         <li class="nav-item"><a class="nav-link " href="rented.html">اضف مكان</a></li>
-        <li class="nav-item"><a class="nav-link " href="contact.html">تواصل معنا</a></li>
+        <!-- <li class="nav-item"><a class="nav-link " href="contact.html">تواصل معنا</a></li> -->
       </ul>
 
-      <button class="btn  navbtn" onclick="location.href='#login'" >سجل الآن</button>
+      <button class="btn  navbtn" onclick="location.href='login.html'" >سجل الآن</button>
     </div>
     </div>
 </nav>
@@ -215,5 +221,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     </script>
     <script src="js/bootstrap.bundle.js"></script>
+    <script src="js/auth.js"></script>
 </body>
 </html>
