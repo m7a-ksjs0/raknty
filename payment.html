@@ -4,7 +4,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>raknty</title>
+    <title>ركنتي - Raknty</title>
+    <link rel="icon" type="image/png" href="img/7ec00354-f338-412d-a4a1-11a34e710726.png">
     <link rel="stylesheet" href="css/all.min.css" />
     <link rel="stylesheet" href="css/bootstrap.css" />
     <link rel="stylesheet" href="css/style.css" />
@@ -45,7 +46,39 @@
   <h2>💳 الدفع</h2>
 
   <p id="place">المكان: مول العرب</p>
-  <p id="price">السعر: 20 ج.م</p>
+  <p id="hourlyPrice">السعر في الساعة: 20 ج.م</p>
+
+  <div class="date-selector" style="margin: 15px 0; text-align: right;">
+    <label style="color: #aaa; display: block; margin-bottom: 5px;">تاريخ الحجز:</label>
+    <input type="date" id="bookingDate" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); color: white; border-radius: 8px; padding: 8px; width: 100%; text-align: center;">
+  </div>
+
+  <div class="time-selector" style="margin: 15px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: right;">
+    <div>
+      <label style="color: #aaa; display: block; margin-bottom: 5px;">من الساعة:</label>
+      <input type="time" id="startTime" value="12:00" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); color: white; border-radius: 8px; padding: 8px; width: 100%; text-align: center;">
+    </div>
+    <div>
+      <label style="color: #aaa; display: block; margin-bottom: 5px;">إلى الساعة:</label>
+      <input type="time" id="endTime" value="14:00" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); color: white; border-radius: 8px; padding: 8px; width: 100%; text-align: center;">
+    </div>
+  </div>
+
+  <p id="durationText" style="color: #aaa; font-size: 14px; margin-bottom: 5px;">المدة: 2 ساعة</p>
+  <p id="totalPrice" style="color: goldenrod; font-weight: bold; font-size: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">إجمالي الحساب: 40 ج.م</p>
+
+  <!-- Map Section -->
+  <div class="map-container" style="margin: 20px 0; border-radius: 15px; overflow: hidden; border: 1px solid rgba(212,175,55,0.3); height: 200px;">
+    <iframe 
+      id="mapFrame"
+      width="100%" 
+      height="100%" 
+      frameborder="0" 
+      style="border:0;" 
+      src="https://maps.google.com/maps?q=Mall+of+Arabia,Egypt&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+      allowfullscreen>
+    </iframe>
+  </div>
 
   <button onclick="payNow()">ادفع الآن</button>
 
@@ -56,14 +89,96 @@
     <script src="js/bootstrap.bundle.js"></script>
 </body>
          <script>
-     const place = localStorage.getItem("placeName");
-     const price = localStorage.getItem("price");
-     
-     document.getElementById("place").innerText = "المكان: " + place;
-     document.getElementById("price").innerText = "السعر: " + price + " ج.م";
+     const bookingDateInput = document.getElementById("bookingDate");
+     const startTimeInput = document.getElementById("startTime");
+     const endTimeInput = document.getElementById("endTime");
+     const durationText = document.getElementById("durationText");
+     const totalPriceDisplay = document.getElementById("totalPrice");
+
+     // Set default date to today
+     const today = new Date().toISOString().split('T')[0];
+     bookingDateInput.value = today;
+     bookingDateInput.min = today;
+
+     function updatePrice() {
+         const start = startTimeInput.value.split(':');
+         const end = endTimeInput.value.split(':');
+         
+         const startMin = parseInt(start[0]) * 60 + parseInt(start[1]);
+         const endMin = parseInt(end[0]) * 60 + parseInt(end[1]);
+         
+         let diffMin = endMin - startMin;
+         if (diffMin < 0) diffMin += 1440;
+
+         let hours = Math.ceil(diffMin / 60);
+         if (hours === 0) hours = 1;
+
+         const total = hours * price;
+         
+         durationText.innerText = "المدة: " + hours + " ساعة";
+         totalPriceDisplay.innerText = "إجمالي الحساب: " + total + " ج.م";
+
+         // Check for overlaps
+         checkOverlap(bookingDateInput.value, startMin, endMin);
+     }
+
+     function checkOverlap(date, newStart, newEnd) {
+         const reservations = JSON.parse(localStorage.getItem("allReservations") || "[]");
+         const currentPlace = localStorage.getItem("placeName");
+         const payBtn = document.querySelector('button[onclick="payNow()"]');
+         
+         const isOverlap = reservations.some(res => {
+             if (res.placeName !== currentPlace || res.date !== date) return false;
+             return (newStart < res.endMin) && (newEnd > res.startMin);
+         });
+
+         if (isOverlap) {
+             payBtn.disabled = true;
+             payBtn.innerText = "عذراً.. هذا الوقت محجوز بالفعل في هذا اليوم";
+             payBtn.style.background = "#555";
+         } else {
+             payBtn.disabled = false;
+             payBtn.innerText = "ادفع الآن";
+             payBtn.style.background = "linear-gradient(135deg, #D4AF37, #b8962e)";
+         }
+     }
+
+     bookingDateInput.addEventListener("input", updatePrice);
+     startTimeInput.addEventListener("input", updatePrice);
+     endTimeInput.addEventListener("input", updatePrice);
+     updatePrice(); 
+
+     // Update map dynamically
+     if (place) {
+         const mapUrl = `https://maps.google.com/maps?q=${encodeURIComponent(place + ", Egypt")}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+         document.getElementById("mapFrame").src = mapUrl;
+     }
      
      function payNow() {
-       alert("تم الدفع بنجاح ✅");
+       const date = bookingDateInput.value;
+       const start = startTimeInput.value.split(':');
+       const end = endTimeInput.value.split(':');
+       const startMin = parseInt(start[0]) * 60 + parseInt(start[1]);
+       let endMin = parseInt(end[0]) * 60 + parseInt(end[1]);
+       if (endMin < startMin) endMin += 1440;
+
+       if (!date) {
+           alert("برجاء اختيار التاريخ");
+           return;
+       }
+
+       // Save reservation
+       const reservations = JSON.parse(localStorage.getItem("allReservations") || "[]");
+       reservations.push({
+           placeName: localStorage.getItem("placeName"),
+           date: date,
+           startMin: startMin,
+           endMin: endMin
+       });
+       localStorage.setItem("allReservations", JSON.stringify(reservations));
+
+       alert(`تم الحجز بنجاح ليوم ${date} ✅`);
+       location.href = "index.html";
      }
      </script>
      <script>

@@ -4,7 +4,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>raknty</title>
+    <title>ركنتي - Raknty</title>
+    <link rel="icon" type="image/png" href="img/7ec00354-f338-412d-a4a1-11a34e710726.png">
     <link rel="stylesheet" href="css/all.min.css" />
     <link rel="stylesheet" href="css/bootstrap.css" />
     <link rel="stylesheet" href="css/style.css" />
@@ -56,6 +57,24 @@ document.addEventListener("DOMContentLoaded", () => {
   container.addEventListener("mouseenter", stopAutoSlide);
 
   container.addEventListener("mouseleave", startAutoSlide);
+
+  // Load saved places from localStorage (added by users)
+  const savedPlaces = JSON.parse(localStorage.getItem("myAddedPlaces") || "[]");
+  savedPlaces.forEach(place => {
+      const card = document.createElement('div');
+      card.className = 'parking-card';
+      card.innerHTML = `
+          <img src="${place.image}">
+          <div class="card-content">
+              <h5>${place.name}</h5>
+              <p>${place.location}</p>
+              <div class="rating">⭐ ${place.rating}</div>
+              <h6>${place.price} ج.م / ساعة</h6>
+              <button onclick="goToPayment('${place.name}', ${place.price})">احجز الآن</button>
+          </div>
+      `;
+      container.prepend(card);
+  });
 });
 </script>
 </head>
@@ -141,6 +160,60 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </main>
     
+    <script>
+    // Search functionality
+    document.querySelector('.search-box input').addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        const cards = document.querySelectorAll('.parking-card');
+        
+        cards.forEach(card => {
+            const title = card.querySelector('h5').textContent.toLowerCase();
+            const location = card.querySelector('p').textContent.toLowerCase();
+            
+            if (title.includes(searchTerm) || location.includes(searchTerm)) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+
+    // Filter buttons interactivity
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            const filterType = this.textContent.trim();
+            const wrapper = document.getElementById('cardsWrapper');
+            const cards = Array.from(document.querySelectorAll('.parking-card'));
+
+            if (filterType === 'السعر') {
+                cards.sort((a, b) => {
+                    const priceA = parseInt(a.querySelector('h6').textContent.replace(/\D/g, ''));
+                    const priceB = parseInt(b.querySelector('h6').textContent.replace(/\D/g, ''));
+                    return priceA - priceB;
+                });
+            } else if (filterType === 'التقييم') {
+                cards.sort((a, b) => {
+                    const ratingA = parseFloat(a.querySelector('.rating').textContent.replace('⭐', ''));
+                    const ratingB = parseFloat(b.querySelector('.rating').textContent.replace('⭐', ''));
+                    return ratingB - ratingA;
+                });
+            } else if (filterType === 'الموقع') {
+                cards.sort((a, b) => {
+                    const locA = a.querySelector('p').textContent.trim();
+                    const locB = b.querySelector('p').textContent.trim();
+                    return locA.localeCompare(locB, 'ar');
+                });
+            }
+
+            // Re-append sorted cards
+            cards.forEach(card => wrapper.appendChild(card));
+        });
+    });
+    </script>
     <script src="js/bootstrap.bundle.js"></script>
 </body>
 </html>

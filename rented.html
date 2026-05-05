@@ -4,10 +4,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>raknty</title>
+    <title>ركنتي - Raknty</title>
+    <link rel="icon" type="image/png" href="img/7ec00354-f338-412d-a4a1-11a34e710726.png">
     <link rel="stylesheet" href="css/all.min.css" />
     <link rel="stylesheet" href="css/bootstrap.css" />
     <link rel="stylesheet" href="css/style.css" />
+    
+    <!-- Leaflet Map CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <style>
+      .features button.active {
+        background: #D4AF37 !important;
+        color: black !important;
+      }
+      #map { height: 300px; border-radius: 15px; }
+    </style>
     
 </head>
 <body>
@@ -82,19 +93,18 @@
       </div>
 
       <div class="images-section">
-
-        <div class="upload-box">
+        <input type="file" id="fileInput" multiple accept="image/*" style="display: none;">
+        <div class="upload-box" id="uploadTrigger" style="cursor: pointer;">
           <p>إضافة صور</p>
         </div>
 
-        <div class="image-preview"></div>
-        <div class="image-preview"></div>
-        <div class="image-preview"></div>
-
+        <div class="image-preview-container d-flex gap-2">
+          <div class="image-preview"></div>
+        </div>
       </div>
 
-      <div class="map-box">
-        <p>الموقع على الخريطة</p>
+      <div class="map-box" id="map">
+        <!-- Map will be initialized here -->
       </div>
 
       <div class="form-actions">
@@ -110,5 +120,102 @@
 </main>
     
     <script src="js/bootstrap.bundle.js"></script>
+    
+    <!-- Leaflet Map JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
+    <script>
+      // Initialize Map
+      const map = L.map('map').setView([30.0444, 31.2357], 11); // Cairo
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap contributors'
+      }).addTo(map);
+
+      let marker;
+      map.on('click', function(e) {
+          if (marker) {
+              marker.setLatLng(e.latlng);
+          } else {
+              marker = L.marker(e.latlng, {draggable: true}).addTo(map);
+          }
+          // Optionally update the location input field
+          console.log("Selected Location:", e.latlng);
+      });
+
+      // Feature Buttons Toggling
+      const featureButtons = document.querySelectorAll('.features button');
+      featureButtons.forEach(btn => {
+          btn.addEventListener('click', function(e) {
+              e.preventDefault();
+              this.classList.toggle('active');
+          });
+      });
+
+      // Form Submission
+      document.querySelector('.submit').addEventListener('click', function() {
+          const name = document.querySelector('input[placeholder="ادخل اسم المكان"]').value;
+          const locationName = document.querySelector('input[placeholder="ادخل الموقع بدقة"]').value;
+          const price = document.querySelector('input[placeholder="ادخل السعر في الساعة"]').value;
+          const desc = document.querySelector('textarea').value;
+          const img = document.querySelector('.image-preview img') ? document.querySelector('.image-preview img').src : 'img/ChatGPT Image Apr 29, 2026, 12_42_48 AM.png';
+          
+          if (!name || !locationName || !price) {
+              alert("برجاء إكمال البيانات الأساسية (الاسم، الموقع، السعر)");
+              return;
+          }
+
+          // Create place object
+          const newPlace = {
+              name: name,
+              location: locationName,
+              price: price,
+              desc: desc,
+              image: img,
+              rating: "5.0" // New places start with 5 stars
+          };
+
+          // Save to localStorage
+          let savedPlaces = JSON.parse(localStorage.getItem("myAddedPlaces") || "[]");
+          savedPlaces.push(newPlace);
+          localStorage.setItem("myAddedPlaces", JSON.stringify(savedPlaces));
+
+          alert("تم إضافة مكانك بنجاح! سيظهر الآن في الأماكن المتاحة ✅");
+          location.href = "tenant.html";
+      });
+
+      // Cancel Button
+      document.querySelector('.cancel').addEventListener('click', function() {
+          if (confirm("هل أنت متأكد من إلغاء الإضافة؟")) {
+              location.href = "index.html";
+          }
+      });
+
+      // Image Upload and Preview
+      const fileInput = document.getElementById('fileInput');
+      const uploadTrigger = document.getElementById('uploadTrigger');
+      const previews = document.querySelectorAll('.image-preview');
+
+      uploadTrigger.addEventListener('click', () => fileInput.click());
+
+      fileInput.addEventListener('change', function() {
+          const files = this.files;
+          if (files && files[0]) {
+              // Clear previous preview
+              previews[0].innerHTML = '';
+              
+              const reader = new FileReader();
+              reader.onload = function(e) {
+                  const img = document.createElement('img');
+                  img.src = e.target.result;
+                  img.style.width = '100%';
+                  img.style.height = '100%';
+                  img.style.objectFit = 'cover';
+                  img.style.borderRadius = '10px';
+                  previews[0].appendChild(img);
+              }
+              reader.readAsDataURL(files[0]);
+          }
+      });
+    </script>
 </body>
 </html>
